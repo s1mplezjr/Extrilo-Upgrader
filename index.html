@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extrilo Upgrader Boostex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #05070c;
+      --card-bg: #0d121d;
+      --card-border: rgba(0, 240, 255, 0.15);
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --pink: #ff0055;
+      --pink-glow: rgba(255, 0, 85, 0.35);
+      --gold: #ffd700;
+      --gold-glow: rgba(255, 215, 0, 0.35);
+      --green: #00ff66;
+      --purple: #a855f7;
+      --text: #e2e8f0;
+      --muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(0, 240, 255, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(255, 0, 85, 0.04) 0%, transparent 40%);
+    }
+
+    /* Top Global Live Drops Ticker */
+    .ticker-bar {
+      width: 100%;
+      background: #090c14;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+    .ticker-track {
+      display: inline-flex;
+      gap: 15px;
+      animation: tickerScroll 35s linear infinite;
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .ticker-item .user { font-weight: 700; color: var(--cyan); }
+    .ticker-item .badge { font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; color: #000; }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      margin-top: 15px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .coin-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid var(--gold);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      color: var(--gold);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .btn-cashin-header {
+      background: linear-gradient(135deg, var(--green), #00b348);
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 0.75rem;
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
+    }
+    .btn-cashin-header:hover { transform: translateY(-2px); box-shadow: 0 0 18px rgba(0, 255, 102, 0.5); }
+
+    .profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.03);
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .profile-pill:hover { border-color: var(--cyan); }
+
+    .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--cyan); }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0 10px;
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 12px;
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .nav-btn:hover { color: #fff; border-color: var(--cyan); }
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(0,120,255,0.1));
+      color: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+
+    /* Container Views */
+    .content-area {
+      width: 100%;
+      max-width: 1100px;
+      margin-top: 20px;
+      padding: 0 10px;
+    }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
+
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      background: #090c12;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-glow); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--cyan), #0077ff);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 20px var(--cyan-glow); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* Wheel Upgrader */
+    .wheel-stage { display: flex; justify-content: center; margin: 20px 0; position: relative; }
+    .wheel-container { width: 260px; height: 260px; position: relative; }
+    canvas#wheelCanvas { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+    .wheel-pointer {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent;
+      border-top: 20px solid var(--gold); filter: drop-shadow(0 0 8px var(--gold)); z-index: 10;
+    }
+    .wheel-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 100px; height: 100px; background: #06080d; border-radius: 50%; border: 2px solid var(--card-border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5;
+    }
+    .chance-val { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; font-weight: 900; color: var(--cyan); }
+
+    /* Cases Grid */
+    .cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .case-card {
+      background: #090c12;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .case-card:hover { border-color: var(--cyan); transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,240,255,0.15); }
+    .case-icon { font-size: 3.5rem; margin-bottom: 10px; }
+    .case-name { font-family: 'Orbitron', sans-serif; font-weight: 700; color: #fff; margin-bottom: 5px; }
+    .case-price { color: var(--gold); font-weight: 800; font-family: 'Orbitron', sans-serif; margin-bottom: 15px; }
+
+    /* Unboxing Tape */
+    .unbox-spinner {
+      width: 100%; height: 120px; background: #06080d; border: 2px solid var(--cyan);
+      border-radius: 10px; overflow: hidden; position: relative; margin-bottom: 20px; display: none;
+    }
+    .unbox-needle {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100%;
+      background: var(--gold); box-shadow: 0 0 10px var(--gold); z-index: 10;
+    }
+    .unbox-track { display: flex; position: absolute; top: 10px; left: 0; height: 100px; transition: transform 5s cubic-bezier(0.1, 1, 0.1, 1); }
+    .unbox-item-tile {
+      min-width: 100px; height: 100px; background: #0f1422; margin-right: 10px; border-radius: 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 2px solid rgba(255,255,255,0.1); font-size: 0.8rem; font-weight: 700; text-align: center; padding: 5px;
+    }
+
+    /* Shop Grid */
+    .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .shop-card { background: #090c12; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; text-align: center; }
+    .shop-tier { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--cyan); margin-bottom: 8px; }
+    .shop-price { color: var(--gold); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 15px; }
+
+    /* Inventory Grid */
+    .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
+    .inv-card { background: #090c12; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 15px; border-left: 4px solid var(--cyan); }
+    .inv-code { font-family: monospace; background: rgba(0,255,102,0.1); color: var(--green); padding: 4px 8px; border-radius: 4px; font-weight: 700; margin: 8px 0; display: block; word-break: break-all; letter-spacing: 1px; }
+    .inv-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-sm { flex: 1; padding: 8px; border: none; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer; }
+    .btn-copy { background: var(--cyan); color: #000; }
+    .btn-sell { background: rgba(255,0,85,0.2); border: 1px solid var(--pink); color: var(--pink); }
+
+    /* Result Box */
+    .result-box { margin-top: 15px; padding: 15px; border-radius: 8px; text-align: center; display: none; }
+    .result-box.success { display: block; background: rgba(0,255,102,0.1); border: 1px solid var(--green); color: var(--green); }
+    .result-box.error { display: block; background: rgba(255,0,85,0.1); border: 1px solid var(--pink); color: var(--pink); }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal { background: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 16px; width: 100%; max-width: 440px; }
+    .hidden { display: none !important; }
+
+    .cashin-preview {
+      background: #06080d;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+      font-size: 0.9rem;
+    }
+    .cashin-preview div { margin-bottom: 6px; }
+    .cashin-preview div:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Live Drops Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">Extrilo Upgrader Boostex</div>
+    <div class="header-right">
+      <div class="coin-display">
+        <span>🪙</span> <span id="coinBalance">1,000</span>
+      </div>
+      <button class="btn-cashin-header" id="btnHeaderCashIn">📥 CASH IN CODE</button>
+      <div class="profile-pill" id="profilePill">
+        <img src="https://via.placeholder.com/40/00f0ff/000000?text=EX" id="headerAvatar" class="avatar" alt="Avatar" />
+        <div>
+          <div id="headerName" style="font-weight:700;">Guest</div>
+          <span style="font-size:0.65rem; color:var(--muted);" id="headerDevice">DESKTOP</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs">
+    <div class="nav-btn active" id="btn-tab-upgrader">⚡ UPGRADER</div>
+    <div class="nav-btn" id="btn-tab-cases">📦 CASES</div>
+    <div class="nav-btn" id="btn-tab-shop">🛒 SHOP</div>
+    <div class="nav-btn" id="btn-tab-inventory">🎒 INVENTORY</div>
+    <div class="nav-btn" id="btn-tab-admin">⚙️ ADMIN</div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="content-area">
+
+    <!-- TAB 1: UPGRADER WHEEL -->
+    <div class="tab-pane active" id="tab-upgrader">
+      <div class="card">
+        <h2>CSGO WHEEL UPGRADER</h2>
+
+        <div class="form-group">
+          <label>Existing Extrilo Promocode (From Extrilo Chat Database)</label>
+          <input type="text" id="messengerPromoInput" placeholder="Enter promocode from Extrilo Messenger..." />
+        </div>
+
+        <div class="form-group">
+          <label>Booster Promocode</label>
+          <select id="boosterPromoSelect">
+            <option value="NONE" data-boost="0">No Booster (+0%)</option>
+            <option value="BOOSTEX" data-boost="0.10">BOOSTEX (+10% Boost)</option>
+            <option value="Zabad11" data-boost="0.15">Zabad11 (+15% Boost)</option>
+            <option value="Prime2" data-boost="0.20">Prime2 (+20% Boost)</option>
+            <option value="Jabawooket" data-boost="0.25">Jabawooket (+25% Boost)</option>
+            <option value="ExtriloBOOST" data-boost="0.30">ExtriloBOOST (+30% Boost)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Target Upgrade Tier</label>
+          <select id="targetTierSelect">
+            <option value="Supporter Tier" data-base="0.75" data-val="100">Supporter Tier (75% Base)</option>
+            <option value="VIP" data-base="0.60" data-val="300">VIP (60% Base)</option>
+            <option value="Premium" data-base="0.45" data-val="1000">Premium (45% Base)</option>
+            <option value="GoldenX" data-base="0.20" data-val="4000">GoldenX (20% Base)</option>
+            <option value="SynapseX" data-base="0.05" data-val="15000">SynapseX (5% Base)</option>
+            <option value="Prime (2 months)" data-base="0.005" data-val="50000">Prime 2 Months (0.5% Base)</option>
+          </select>
+        </div>
+
+        <div class="wheel-stage">
+          <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheelCanvas" width="260" height="260"></canvas>
+            <div class="wheel-center">
+              <div class="chance-val" id="chanceValDisplay">75%</div>
+              <div style="font-size:0.65rem; color:var(--muted);">CHANCE</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="spinBtn">SPIN WHEEL</button>
+
+        <div class="result-box" id="upgraderResultBox"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: UNBOXING CASES -->
+    <div class="tab-pane" id="tab-cases">
+      <div class="card">
+        <h2>EXTRILO CASES</h2>
+
+        <div class="unbox-spinner" id="unboxSpinner">
+          <div class="unbox-needle"></div>
+          <div class="unbox-track" id="unboxTrack"></div>
+        </div>
+
+        <div class="cases-grid">
+          <div class="case-card">
+            <div class="case-icon">📦</div>
+            <div class="case-name">Starter Crate</div>
+            <div class="case-price">🪙 100</div>
+            <button class="btn-primary" id="btn-case-starter">OPEN CASE</button>
+          </div>
+
+          <div class="case-card">
+            <div class="case-icon">🎁</div>
+            <div class="case-name">Silver Vault</div>
+            <div class="case-price">🪙 500</div>
+            <button class="btn-primary" id="btn-case-silver">OPEN CASE</button>
+          </div>
+
+          <div class="case-card">
+            <div class="case-icon">💎</div>
+            <div class="case-name">Cyber Cyberbox</div>
+            <div class="case-price">🪙 2,500</div>
+            <button class="btn-primary" id="btn-case-cyber">OPEN CASE</button>
+          </div>
+
+          <div class="case-card">
+            <div class="case-icon">⚡</div>
+            <div class="case-name">Mythic Extrilo</div>
+            <div class="case-price">🪙 10,000</div>
+            <button class="btn-primary" id="btn-case-mythic">OPEN CASE</button>
+          </div>
+
+          <div class="case-card">
+            <div class="case-icon">👑</div>
+            <div class="case-name">God Tier Case</div>
+            <div class="case-price">🪙 50,000</div>
+            <button class="btn-primary" id="btn-case-god">OPEN CASE</button>
+          </div>
+        </div>
+
+        <div class="result-box" id="caseResultBox"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: TIER SHOP -->
+    <div class="tab-pane" id="tab-shop">
+      <div class="card">
+        <h2>TIER DIRECT SHOP</h2>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:20px;">Directly purchase upgraded tier codes with your coins. Redeemable in Extrilo Chat.</p>
+
+        <div class="shop-grid">
+          <div class="shop-card">
+            <div class="shop-tier">Supporter Tier</div>
+            <div class="shop-price">🪙 250</div>
+            <button class="btn-primary" id="btn-shop-supporter">BUY TIER</button>
+          </div>
+
+          <div class="shop-card">
+            <div class="shop-tier">VIP</div>
+            <div class="shop-price">🪙 750</div>
+            <button class="btn-primary" id="btn-shop-vip">BUY TIER</button>
+          </div>
+
+          <div class="shop-card">
+            <div class="shop-tier">Premium</div>
+            <div class="shop-price">🪙 2,500</div>
+            <button class="btn-primary" id="btn-shop-premium">BUY TIER</button>
+          </div>
+
+          <div class="shop-card">
+            <div class="shop-tier">GoldenX</div>
+            <div class="shop-price">🪙 10,000</div>
+            <button class="btn-primary" id="btn-shop-goldenx">BUY TIER</button>
+          </div>
+
+          <div class="shop-card">
+            <div class="shop-tier">SynapseX</div>
+            <div class="shop-price">🪙 35,000</div>
+            <button class="btn-primary" id="btn-shop-synapsex">BUY TIER</button>
+          </div>
+
+          <div class="shop-card">
+            <div class="shop-tier">Prime (2 Months)</div>
+            <div class="shop-price">🪙 100,000</div>
+            <button class="btn-primary" id="btn-shop-prime">BUY TIER</button>
+          </div>
+        </div>
+
+        <div class="result-box" id="shopResultBox"></div>
+      </div>
+    </div>
+
+    <!-- TAB 4: INVENTORY -->
+    <div class="tab-pane" id="tab-inventory">
+      <div class="card">
+        <h2>USER INVENTORY</h2>
+        <div class="inventory-grid" id="inventoryGrid">
+          <div style="color:var(--muted);">Your inventory is empty.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COPY CODE CONFIRMATION MODAL -->
+  <div class="modal-overlay hidden" id="copyConfirmModal">
+    <div class="modal" style="text-align:center;">
+      <h2 style="font-family:'Orbitron'; color:var(--gold); margin-bottom:15px;">⚠️ ARE YOU SURE?</h2>
+      <p style="color:var(--text); font-size:1rem; margin-bottom:20px; line-height:1.5;">
+        Are you sure? If you proceed, the promocode <code id="copyModalCode" style="color:var(--cyan); font-weight:800; background:rgba(0,240,255,0.1); padding:2px 6px; border-radius:4px;"></code> for <strong id="copyModalTier" style="color:var(--gold);"></strong> will be copied and <strong>permanently deleted from your inventory</strong>.
+      </p>
+
+      <div style="display:flex; gap:12px;">
+        <button class="btn-primary" style="background:#334155; color:#fff;" id="btn-copy-cancel">CANCEL</button>
+        <button class="btn-primary" style="background:linear-gradient(135deg, var(--pink), #e11d48); color:#fff;" id="btn-copy-proceed">PROCEED & DELETE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASH IN MODAL -->
+  <div class="modal-overlay hidden" id="cashInModal">
+    <div class="modal">
+      <h2 style="font-family:'Orbitron'; color:var(--green); margin-bottom:15px; text-align:center;">📥 CASH IN CHAT CODE</h2>
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:15px; text-align:center;">
+        Enter a promocode created in Extrilo Chat to convert it into Upgrader Coins.
+      </p>
+
+      <div class="form-group">
+        <label>Extrilo Chat Promocode</label>
+        <input type="text" id="cashInCodeInput" placeholder="e.g. POAU6ANR" />
+      </div>
+
+      <button class="btn-primary" style="background:linear-gradient(135deg, var(--cyan), #0077ff); margin-bottom:10px;" id="btn-cashin-check">CHECK CODE</button>
+
+      <div class="cashin-preview hidden" id="cashInPreviewBox">
+        <div><strong>Code:</strong> <span id="prevCode" style="color:var(--cyan);"></span></div>
+        <div><strong>Tier:</strong> <span id="prevTier" style="color:var(--gold);"></span></div>
+        <div><strong>Remaining Uses:</strong> <span id="prevUses" style="color:var(--green);"></span></div>
+        <div><strong>Coin Reward:</strong> <span id="prevCoins" style="color:var(--gold); font-weight:800;"></span> 🪙</div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="btn-primary" style="background:#334155; color:#fff;" id="btn-cashin-cancel">CANCEL</button>
+        <button class="btn-primary" style="background:linear-gradient(135deg, var(--green), #00b348);" id="btn-cashin-confirm" disabled>REDEEM COINS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL (SIGNUP / LOGIN) -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <h2 style="font-family:'Orbitron'; color:var(--cyan); margin-bottom:15px; text-align:center;">LOGIN / SIGNUP</h2>
+      
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="authUsername" placeholder="Enter username..." value="CyberKing" />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="authPassword" placeholder="Enter password..." value="123456" />
+      </div>
+
+      <div class="form-group">
+        <label>Device Type</label>
+        <select id="authDevice">
+          <option value="Desktop">Desktop</option>
+          <option value="Phone">Phone / Mobile</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Avatar (URL or Upload)</label>
+        <input type="text" id="authAvatarUrl" placeholder="https://..." style="margin-bottom:8px;" />
+        <input type="file" id="authAvatarFile" accept="image/*" />
+      </div>
+
+      <button class="btn-primary" id="btn-auth-submit">ENTER SYSTEM</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PASSWORD MODAL -->
+  <div class="modal-overlay hidden" id="adminPassModal">
+    <div class="modal">
+      <h2 style="font-family:'Orbitron'; color:var(--pink); margin-bottom:15px; text-align:center;">ADMIN ACCESS</h2>
+      <div class="form-group">
+        <label>Admin Security Key</label>
+        <input type="password" id="adminKeyInput" placeholder="Enter password (123456789)" />
+      </div>
+      <button class="btn-primary" id="btn-admin-verify">UNLOCK PANEL</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL MODAL -->
+  <div class="modal-overlay hidden" id="adminPanelModal">
+    <div class="modal" style="max-width:500px;">
+      <h2 style="font-family:'Orbitron'; color:var(--gold); margin-bottom:15px; text-align:center;">ADMIN PANEL</h2>
+      
+      <div class="form-group">
+        <label>God Mode Drop Boost (%)</label>
+        <input type="number" id="adminBoostInput" placeholder="e.g. 100 for 100% win" value="0" />
+      </div>
+
+      <div class="form-group">
+        <label>Add Coins</label>
+        <input type="number" id="adminCoinsInput" placeholder="e.g. 50000" />
+        <button class="btn-primary" style="margin-top:6px; background:var(--gold);" id="btn-admin-addcoins">ADD COINS</button>
+      </div>
+
+      <div class="form-group">
+        <label>Give Custom Item to Inventory</label>
+        <select id="adminItemTier">
+          <option value="Supporter Tier">Supporter Tier</option>
+          <option value="VIP">VIP</option>
+          <option value="Premium">Premium</option>
+          <option value="GoldenX">GoldenX</option>
+          <option value="SynapseX">SynapseX</option>
+          <option value="Prime (2 months)">Prime (2 months)</option>
+        </select>
+        <button class="btn-primary" style="margin-top:6px;" id="btn-admin-giveitem">GIVE ITEM</button>
+      </div>
+
+      <button class="btn-primary" style="background:#334155; margin-top:15px;" id="btn-admin-close">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- FIREBASE DUAL INTEGRATION SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getDatabase, 
+      ref, 
+      get, 
+      set, 
+      update, 
+      remove,
+      push,
+      onChildAdded,
+      query,
+      limitToLast
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // ================================================================
+    // 1. DEDICATED EXTRILO UPGRADER FIREBASE CONFIG
+    // ================================================================
+    const upgraderConfig = {
+      apiKey: "AIzaSyDPx9P6ALO3ZrlRsXVwH3OTdPkJXMpNzoM",
+      authDomain: "extrilo-upgrader.firebaseapp.com",
+      databaseURL: "https://extrilo-upgrader-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "extrilo-upgrader",
+      storageBucket: "extrilo-upgrader.firebasestorage.app",
+      messagingSenderId: "981121759366",
+      appId: "1:981121759366:web:ab0dda94b78c69ab17f907",
+      measurementId: "G-5501T649WH"
+    };
+
+    const upgraderApp = initializeApp(upgraderConfig, "upgraderApp");
+    const upgraderDB = getDatabase(upgraderApp);
+    const upgraderAuth = getAuth(upgraderApp);
+
+    // ================================================================
+    // 2. EXTRILO CHAT FIREBASE CONFIG (FOR CASH IN / CASH OUT PROMOCODES)
+    // ================================================================
+    const chatConfig = {
+      apiKey: "AIzaSyD7OBG9apOD1WdT8spoN9Q4amqx-syGLVA",
+      authDomain: "extrilochat.firebaseapp.com",
+      databaseURL: "https://extrilochat-default-rtdb.firebaseio.com",
+      projectId: "extrilochat",
+      storageBucket: "extrilochat.firebasestorage.app",
+      messagingSenderId: "222573643769",
+      appId: "1:222573643769:web:9e1691bbad56c5da7e5f28",
+      measurementId: "G-5ZGV97LHTM"
+    };
+
+    const chatApp = initializeApp(chatConfig, "chatApp");
+    const chatDB = getDatabase(chatApp);
+    const chatAuth = getAuth(chatApp);
+
+    // Authenticate both Firebase apps anonymously
+    signInAnonymously(upgraderAuth).catch(err => console.log("Upgrader Auth Anonymous:", err));
+    signInAnonymously(chatAuth).catch(err => console.log("Chat Auth Anonymous:", err));
+
+    // Tier Coin Value Conversion
+    const TIER_COIN_VALUES = {
+      "Supporter Tier": 100,
+      "Supporter": 100,
+      "VIP": 300,
+      "Premium": 1000,
+      "GoldenX": 4000,
+      "SynapseX": 15000,
+      "Prime (2 months)": 50000,
+      "Prime": 50000
+    };
+
+    // Audio Synth Engine
+    let audioCtx;
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    function playBeep(freq, duration, type = 'sine') {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // App State
+    const appState = {
+      user: {
+        username: "",
+        device: "Desktop",
+        avatar: "https://via.placeholder.com/40/00f0ff/000000?text=EX",
+        coins: 1000
+      },
+      inventory: [],
+      adminBoost: 0,
+      currentWinChance: 0.75,
+      activeCashInMatch: null,
+      pendingCopyIndex: null
+    };
+
+    // ================================================================
+    // 3. 8-CHARACTER CHAT PROMOCODE GENERATOR (e.g., POAU6ANR)
+    // ================================================================
+    function generate8CharChatCode() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = '';
+      for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
+
+    // Helper: Find Promocode in Extrilo Chat Realtime DB
+    async function findChatPromo(code) {
+      if (!code) return null;
+      const cleanCode = code.trim();
+      const upperCode = cleanCode.toUpperCase();
+
+      const paths = [
+        `extrilo/extrilo_promos/${cleanCode}`,
+        `extrilo/extrilo_promos/${upperCode}`,
+        `extrilo/state/extrilo_promos/${cleanCode}`,
+        `extrilo/state/extrilo_promos/${upperCode}`,
+        `extrilo/state/extrilo_tag_promos/${cleanCode}`,
+        `extrilo/state/extrilo_tag_promos/${upperCode}`,
+        `extrilo/extrilo_tag_promos/${cleanCode}`,
+        `extrilo/extrilo_tag_promos/${upperCode}`
+      ];
+
+      for (const p of paths) {
+        const promoRef = ref(chatDB, p);
+        const snap = await get(promoRef);
+        if (snap.exists()) {
+          return { ref: promoRef, data: snap.val(), path: p, codeKey: p.split('/').pop() };
+        }
+      }
+      return null;
+    }
+
+    async function consumeChatPromo(match) {
+      if (!match || !match.ref) return;
+      const data = match.data || {};
+      const currentUses = parseInt(data.uses) || 1;
+
+      if (currentUses > 1) {
+        await update(match.ref, { uses: currentUses - 1 });
+      } else {
+        await remove(match.ref);
+      }
+    }
+
+    // Write Cash Out Promocode to Chat DB under /extrilo/extrilo_promos AND /extrilo/state/extrilo_promos
+    async function writeChatPromo(code, tier) {
+      const promoObj = {
+        tier: tier,
+        rewardTier: tier,
+        uses: 1,
+        active: true,
+        createdBy: appState.user.username || "UpgraderBoostex",
+        createdAt: Date.now()
+      };
+
+      // Write directly to both /extrilo/extrilo_promos/POAU6ANR and /extrilo/state/extrilo_promos/POAU6ANR
+      await set(ref(chatDB, `extrilo/extrilo_promos/${code}`), promoObj);
+      await set(ref(chatDB, `extrilo/state/extrilo_promos/${code}`), promoObj);
+    }
+
+    // ================================================================
+    // 4. UI TAB NAVIGATION
+    // ================================================================
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-pane").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+
+      document.getElementById(`tab-${tabId}`).classList.add("active");
+      document.getElementById(`btn-tab-${tabId}`).classList.add("active");
+    }
+
+    document.getElementById("btn-tab-upgrader").addEventListener("click", () => switchTab('upgrader'));
+    document.getElementById("btn-tab-cases").addEventListener("click", () => switchTab('cases'));
+    document.getElementById("btn-tab-shop").addEventListener("click", () => switchTab('shop'));
+    document.getElementById("btn-tab-inventory").addEventListener("click", () => switchTab('inventory'));
+    document.getElementById("btn-tab-admin").addEventListener("click", openAdminModal);
+
+    // ================================================================
+    // 5. AUTHENTICATION & USER DATA (UPGRADER DB)
+    // ================================================================
+    const authAvatarFile = document.getElementById("authAvatarFile");
+    authAvatarFile.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => document.getElementById("authAvatarUrl").value = evt.target.result;
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById("btn-auth-submit").addEventListener("click", async () => {
+      initAudio();
+      const user = document.getElementById("authUsername").value.trim();
+      const pass = document.getElementById("authPassword").value.trim();
+      const dev = document.getElementById("authDevice").value;
+      const av = document.getElementById("authAvatarUrl").value.trim() || "https://via.placeholder.com/40/00f0ff/000000?text=EX";
+
+      if (!user || !pass) {
+        return alert("Please provide both Username and Password.");
+      }
+
+      const userRef = ref(upgraderDB, `users/${user}`);
+      const snap = await get(userRef);
+
+      if (snap.exists()) {
+        const userData = snap.val();
+        if (userData.password !== pass) {
+          return alert("Incorrect password for existing account!");
+        }
+        appState.user.username = user;
+        appState.user.device = userData.device || dev;
+        appState.user.avatar = userData.avatar || av;
+        appState.user.coins = userData.coins !== undefined ? userData.coins : 1000;
+        appState.inventory = userData.inventory ? Object.values(userData.inventory) : [];
+      } else {
+        appState.user.username = user;
+        appState.user.device = dev;
+        appState.user.avatar = av;
+        appState.user.coins = 1000;
+        appState.inventory = [];
+
+        await set(userRef, {
+          password: pass,
+          device: dev,
+          avatar: av,
+          coins: 1000,
+          inventory: {}
+        });
+      }
+
+      updateUIHeader();
+      renderInventory();
+      document.getElementById("authModal").classList.add("hidden");
+    });
+
+    document.getElementById("profilePill").addEventListener("click", () => {
+      document.getElementById("authModal").classList.remove("hidden");
+    });
+
+    function updateUIHeader() {
+      document.getElementById("headerName").innerText = appState.user.username;
+      document.getElementById("headerDevice").innerText = appState.user.device.toUpperCase();
+      document.getElementById("headerAvatar").src = appState.user.avatar;
+      document.getElementById("coinBalance").innerText = appState.user.coins.toLocaleString();
+    }
+
+    async function syncCoinsToFirebase() {
+      if (!appState.user.username) return;
+      document.getElementById("coinBalance").innerText = appState.user.coins.toLocaleString();
+      await update(ref(upgraderDB, `users/${appState.user.username}`), {
+        coins: appState.user.coins
+      });
+    }
+
+    function updateCoins(delta) {
+      appState.user.coins += delta;
+      syncCoinsToFirebase();
+    }
+
+    // ================================================================
+    // 6. CASH IN MODAL SYSTEM (CONVERT CHAT CODES TO COINS)
+    // ================================================================
+    const cashInModal = document.getElementById("cashInModal");
+    const cashInCodeInput = document.getElementById("cashInCodeInput");
+    const cashInPreviewBox = document.getElementById("cashInPreviewBox");
+    const btnCashInConfirm = document.getElementById("btn-cashin-confirm");
+
+    document.getElementById("btnHeaderCashIn").addEventListener("click", () => {
+      initAudio();
+      cashInCodeInput.value = "";
+      cashInPreviewBox.classList.add("hidden");
+      btnCashInConfirm.disabled = true;
+      appState.activeCashInMatch = null;
+      cashInModal.classList.remove("hidden");
+    });
+
+    document.getElementById("btn-cashin-cancel").addEventListener("click", () => {
+      cashInModal.classList.add("hidden");
+    });
+
+    document.getElementById("btn-cashin-check").addEventListener("click", async () => {
+      initAudio();
+      const code = cashInCodeInput.value.trim();
+      if (!code) return alert("Please enter a promocode to check.");
+
+      try {
+        const match = await findChatPromo(code);
+        if (!match) {
+          cashInPreviewBox.classList.add("hidden");
+          btnCashInConfirm.disabled = true;
+          appState.activeCashInMatch = null;
+          return alert(`Promocode "${code}" was not found in Extrilo Chat database.`);
+        }
+
+        const data = match.data || {};
+        if (data.uses <= 0 || data.active === false) {
+          cashInPreviewBox.classList.add("hidden");
+          btnCashInConfirm.disabled = true;
+          appState.activeCashInMatch = null;
+          return alert(`Promocode "${code}" is expired or has already been redeemed.`);
+        }
+
+        const tier = data.tier || data.rewardTier || "Supporter";
+        const coinsReward = TIER_COIN_VALUES[tier] || 500;
+
+        document.getElementById("prevCode").innerText = match.codeKey;
+        document.getElementById("prevTier").innerText = tier;
+        document.getElementById("prevUses").innerText = data.uses || 1;
+        document.getElementById("prevCoins").innerText = coinsReward.toLocaleString();
+
+        cashInPreviewBox.classList.remove("hidden");
+        btnCashInConfirm.disabled = false;
+        appState.activeCashInMatch = match;
+      } catch (err) {
+        alert("Error checking promo code: " + err.message);
+      }
+    });
+
+    btnCashInConfirm.addEventListener("click", async () => {
+      initAudio();
+      if (!appState.activeCashInMatch) return;
+
+      const match = appState.activeCashInMatch;
+      const data = match.data || {};
+      const tier = data.tier || data.rewardTier || "Supporter";
+      const coinsReward = TIER_COIN_VALUES[tier] || 500;
+
+      try {
+        await consumeChatPromo(match);
+        updateCoins(coinsReward);
+        playBeep(880, 0.3, 'triangle');
+
+        alert(`Successfully redeemed Chat Code "${match.codeKey}"! +🪙 ${coinsReward.toLocaleString()} Coins added to your account.`);
+        cashInModal.classList.add("hidden");
+      } catch (err) {
+        alert("Error redeeming promocode: " + err.message);
+      }
+    });
+
+    // ================================================================
+    // 7. INVENTORY MANAGEMENT (COPY WITH CONFIRM & AUTOMATIC DELETE)
+    // ================================================================
+    const copyConfirmModal = document.getElementById("copyConfirmModal");
+    const copyModalCode = document.getElementById("copyModalCode");
+    const copyModalTier = document.getElementById("copyModalTier");
+    const btnCopyCancel = document.getElementById("btn-copy-cancel");
+    const btnCopyProceed = document.getElementById("btn-copy-proceed");
+
+    async function syncInventoryToFirebase() {
+      if (!appState.user.username) return;
+      await update(ref(upgraderDB, `users/${appState.user.username}`), {
+        inventory: appState.inventory
+      });
+      renderInventory();
+    }
+
+    function renderInventory() {
+      const grid = document.getElementById("inventoryGrid");
+      grid.innerHTML = "";
+
+      if (appState.inventory.length === 0) {
+        grid.innerHTML = '<div style="color:var(--muted);">Your inventory is empty.</div>';
+        return;
+      }
+
+      appState.inventory.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "inv-card";
+        card.innerHTML = `
+          <div style="font-weight:800; font-family:'Orbitron'; color:var(--cyan);">${item.tier}</div>
+          <span class="inv-code">${item.code}</span>
+          <div style="font-size:0.75rem; color:var(--gold);">Sell Value: 🪙 ${item.val}</div>
+          <div class="inv-actions">
+            <button class="btn-sm btn-copy" id="btn-copy-${index}">COPY CODE</button>
+            <button class="btn-sm btn-sell" id="btn-sell-${index}">SELL FOR COINS</button>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        // TRIGGER CONFIRMATION SCREEN ON COPY CLICK
+        document.getElementById(`btn-copy-${index}`).addEventListener("click", () => {
+          initAudio();
+          appState.pendingCopyIndex = index;
+          copyModalCode.innerText = item.code;
+          copyModalTier.innerText = item.tier;
+          copyConfirmModal.classList.remove("hidden");
+        });
+
+        // SELL FOR COINS
+        document.getElementById(`btn-sell-${index}`).addEventListener("click", () => {
+          updateCoins(item.val);
+          playBeep(800, 0.2, 'triangle');
+          appState.inventory.splice(index, 1);
+          syncInventoryToFirebase();
+        });
+      });
+    }
+
+    // COPY CONFIRMATION MODAL - CANCEL
+    btnCopyCancel.addEventListener("click", () => {
+      initAudio();
+      appState.pendingCopyIndex = null;
+      copyConfirmModal.classList.add("hidden");
+    });
+
+    // COPY CONFIRMATION MODAL - PROCEED & DELETE FROM INVENTORY
+    btnCopyProceed.addEventListener("click", async () => {
+      initAudio();
+      const index = appState.pendingCopyIndex;
+      if (index === null || index === undefined || !appState.inventory[index]) {
+        copyConfirmModal.classList.add("hidden");
+        return;
+      }
+
+      const item = appState.inventory[index];
+      const code = item.code;
+      const tier = item.tier;
+
+      try {
+        // 1. Ensure promo is active live in /extrilo/extrilo_promos
+        await writeChatPromo(code, tier);
+
+        // 2. Copy code to clipboard
+        await navigator.clipboard.writeText(code);
+        playBeep(900, 0.2);
+
+        // 3. Delete item from inventory and sync
+        appState.inventory.splice(index, 1);
+        appState.pendingCopyIndex = null;
+        copyConfirmModal.classList.add("hidden");
+
+        await syncInventoryToFirebase();
+
+        alert(`✅ Promocode "${code}" copied to clipboard!\n\nThe item was redeemed/extracted and REMOVED from your inventory. You can now use it in Extrilo Chat.`);
+      } catch (err) {
+        alert(`Error proceeding with copy: ${err.message}`);
+        copyConfirmModal.classList.add("hidden");
+      }
+    });
+
+    async function addInventoryItem(tier, code, val) {
+      appState.inventory.unshift({ tier, code, val, timestamp: Date.now() });
+      await syncInventoryToFirebase();
+      pushGlobalDrop(appState.user.username, tier, code);
+    }
+
+    // ================================================================
+    // 8. GLOBAL DROPS STREAM (UPGRADER DB)
+    // ================================================================
+    const TIER_COLORS = {
+      "Supporter Tier": "#00f0ff",
+      "VIP": "#00ff66",
+      "Premium": "#a855f7",
+      "GoldenX": "#ffd700",
+      "SynapseX": "#ff0055",
+      "Prime (2 months)": "#ff0000"
+    };
+
+    async function pushGlobalDrop(user, tier, code) {
+      const globalDropsRef = push(ref(upgraderDB, "globalDrops"));
+      await set(globalDropsRef, {
+        user: user,
+        tier: tier,
+        code: code,
+        timestamp: Date.now()
+      });
+    }
+
+    const globalDropsQuery = query(ref(upgraderDB, "globalDrops"), limitToLast(20));
+    onChildAdded(globalDropsQuery, (snap) => {
+      const drop = snap.val();
+      const track = document.getElementById("tickerTrack");
+      const item = document.createElement("div");
+      item.className = "ticker-item";
+      item.innerHTML = `
+        <span class="user">${drop.user}</span>
+        <span>unboxed</span>
+        <span class="badge" style="background:${TIER_COLORS[drop.tier] || '#00f0ff'}">${drop.tier}</span>
+        <code>${drop.code}</code>
+      `;
+      track.prepend(item);
+    });
+
+    // ================================================================
+    // 9. CSGO WHEEL UPGRADER ENGINE
+    // ================================================================
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    let wheelRotationAngle = 0;
+
+    function drawWheel(winRatio, currentAngle = 0) {
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = canvas.width / 2 - 5;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const winAngle = winRatio * Math.PI * 2;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(currentAngle);
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, radius, -Math.PI / 2, -Math.PI / 2 + winAngle);
+      ctx.fillStyle = "#00f0ff";
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, radius, -Math.PI / 2 + winAngle, -Math.PI / 2 + Math.PI * 2);
+      ctx.fillStyle = "#ff0055";
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function calculateChance() {
+      const tierSelect = document.getElementById("targetTierSelect");
+      const baseChance = parseFloat(tierSelect.options[tierSelect.selectedIndex].getAttribute("data-base"));
+
+      const boosterSelect = document.getElementById("boosterPromoSelect");
+      const boostValue = parseFloat(boosterSelect.options[boosterSelect.selectedIndex].getAttribute("data-boost"));
+
+      let totalChance = baseChance + boostValue + (appState.adminBoost / 100);
+      if (totalChance > 0.98) totalChance = 0.98;
+
+      appState.currentWinChance = totalChance;
+      document.getElementById("chanceValDisplay").innerText = `${(totalChance * 100).toFixed(1)}%`;
+      drawWheel(appState.currentWinChance, wheelRotationAngle);
+    }
+
+    document.getElementById("targetTierSelect").addEventListener("change", calculateChance);
+    document.getElementById("boosterPromoSelect").addEventListener("change", calculateChance);
+    calculateChance();
+
+    // WHEEL SPIN - INTEGRATED WITH EXTRILO CHAT DB
+    document.getElementById("spinBtn").addEventListener("click", async () => {
+      initAudio();
+      const inputPromo = document.getElementById("messengerPromoInput").value.trim();
+      const tierSelect = document.getElementById("targetTierSelect");
+      const targetTier = tierSelect.value;
+      const val = parseInt(tierSelect.options[tierSelect.selectedIndex].getAttribute("data-val"));
+      const resBox = document.getElementById("upgraderResultBox");
+
+      if (!inputPromo) {
+        resBox.className = "result-box error";
+        resBox.innerText = "Please enter a valid Extrilo Messenger Promocode.";
+        return;
+      }
+
+      const spinBtn = document.getElementById("spinBtn");
+      spinBtn.disabled = true;
+      resBox.style.display = "none";
+
+      try {
+        // Look up Code in Extrilo Chat Realtime DB
+        const promoMatch = await findChatPromo(inputPromo);
+
+        if (!promoMatch) {
+          throw new Error(`Promocode "${inputPromo}" was not found in Extrilo Chat database.`);
+        }
+
+        const promoData = promoMatch.data || {};
+        if (promoData.uses <= 0 || promoData.active === false) {
+          throw new Error(`Promocode "${inputPromo}" is expired or already redeemed.`);
+        }
+
+        const isWin = Math.random() <= appState.currentWinChance;
+        const winAngleRange = appState.currentWinChance * Math.PI * 2;
+        let targetLandingAngle = isWin ? (Math.random() * (winAngleRange - 0.1) + 0.05) : (winAngleRange + Math.random() * (Math.PI * 2 - winAngleRange - 0.1) + 0.05);
+
+        const totalSpinAngle = (Math.PI * 2 * 5) + (Math.PI * 2 - targetLandingAngle);
+        const startAngle = wheelRotationAngle;
+        const startTime = performance.now();
+        const duration = 3500;
+
+        function animateSpin(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+          wheelRotationAngle = startAngle + (totalSpinAngle * easeProgress);
+          drawWheel(appState.currentWinChance, wheelRotationAngle);
+
+          if (progress < 1) {
+            requestAnimationFrame(animateSpin);
+          } else {
+            finalizeWheelOutcome(isWin, inputPromo, targetTier, val, promoMatch);
+          }
+        }
+        requestAnimationFrame(animateSpin);
+
+      } catch (err) {
+        resBox.className = "result-box error";
+        resBox.innerText = `Error: ${err.message}`;
+        spinBtn.disabled = false;
+      }
+    });
+
+    async function finalizeWheelOutcome(isWin, inputPromo, targetTier, val, promoMatch) {
+      const resBox = document.getElementById("upgraderResultBox");
+      const spinBtn = document.getElementById("spinBtn");
+
+      // Consume/decrement original promo code in Extrilo Chat DB
+      try {
+        await consumeChatPromo(promoMatch);
+      } catch (e) {
+        console.error("Error consuming promo:", e);
+      }
+
+      if (isWin) {
+        playBeep(880, 0.3, 'triangle');
+        
+        // Generate 8-character uppercase code (e.g. POAU6ANR)
+        const newCode = generate8CharChatCode();
+
+        // Write live promocode directly to /extrilo/extrilo_promos/POAU6ANR in Chat DB
+        await writeChatPromo(newCode, targetTier);
+
+        // Add to user inventory
+        await addInventoryItem(targetTier, newCode, val);
+
+        resBox.className = "result-box success";
+        resBox.innerHTML = `<strong>SUCCESS!</strong> Upgraded to <strong>${targetTier}</strong>. Live Chat Promocode: <code>${newCode}</code> generated & saved to inventory!`;
+      } else {
+        playBeep(120, 0.4, 'sawtooth');
+        resBox.className = "result-box error";
+        resBox.innerHTML = `<strong>FAILED!</strong> Promocode <code>${inputPromo}</code> was consumed/destroyed in the attempt.`;
+      }
+      spinBtn.disabled = false;
+    }
+
+    // ================================================================
+    // 10. CASE UNBOXING SYSTEM
+    // ================================================================
+    const CASE_CONTENTS = {
+      "Starter Crate": [
+        { tier: "Supporter Tier", chance: 0.70, val: 100 },
+        { tier: "VIP", chance: 0.30, val: 300 }
+      ],
+      "Silver Vault": [
+        { tier: "VIP", chance: 0.60, val: 300 },
+        { tier: "Premium", chance: 0.40, val: 1000 }
+      ],
+      "Cyber Cyberbox": [
+        { tier: "Premium", chance: 0.70, val: 1000 },
+        { tier: "GoldenX", chance: 0.30, val: 4000 }
+      ],
+      "Mythic Extrilo": [
+        { tier: "GoldenX", chance: 0.80, val: 4000 },
+        { tier: "SynapseX", chance: 0.20, val: 15000 }
+      ],
+      "God Tier Case": [
+        { tier: "SynapseX", chance: 0.85, val: 15000 },
+        { tier: "Prime (2 months)", chance: 0.15, val: 50000 }
+      ]
+    };
+
+    function openCase(caseName, price) {
+      initAudio();
+      const resBox = document.getElementById("caseResultBox");
+      if (appState.user.coins < price) {
+        resBox.className = "result-box error";
+        resBox.innerText = "Insufficient coins balance.";
+        return;
+      }
+
+      updateCoins(-price);
+
+      const spinner = document.getElementById("unboxSpinner");
+      const track = document.getElementById("unboxTrack");
+      spinner.style.display = "block";
+      track.style.transform = "translateX(0px)";
+      track.innerHTML = "";
+
+      const pool = CASE_CONTENTS[caseName];
+      let wonItem = pool[0];
+      const rand = Math.random();
+      let cumulative = 0;
+      for (let item of pool) {
+        cumulative += item.chance;
+        if (rand <= cumulative) { wonItem = item; break; }
+      }
+
+      for (let i = 0; i < 30; i++) {
+        const randomTile = pool[Math.floor(Math.random() * pool.length)];
+        const tile = document.createElement("div");
+        tile.className = "unbox-item-tile";
+        tile.style.borderColor = TIER_COLORS[randomTile.tier] || '#00f0ff';
+        tile.innerText = randomTile.tier;
+        track.appendChild(tile);
+      }
+
+      track.children[24].innerText = wonItem.tier;
+      track.children[24].style.borderColor = TIER_COLORS[wonItem.tier] || '#00f0ff';
+
+      setTimeout(() => {
+        track.style.transform = "translateX(-2400px)";
+      }, 50);
+
+      setTimeout(async () => {
+        playBeep(700, 0.3, 'triangle');
+        
+        // Generate 8-character uppercase code (e.g. POAU6ANR)
+        const code = generate8CharChatCode();
+
+        // Write live code directly to /extrilo/extrilo_promos/POAU6ANR in Chat DB
+        await writeChatPromo(code, wonItem.tier);
+
+        // Add to inventory
+        await addInventoryItem(wonItem.tier, code, wonItem.val);
+
+        resBox.className = "result-box success";
+        resBox.innerHTML = `<strong>UNBOXED!</strong> You got <strong>${wonItem.tier}</strong>! Live Chat Code: <code>${code}</code> saved to inventory.`;
+      }, 5100);
+    }
+
+    document.getElementById("btn-case-starter").addEventListener("click", () => openCase('Starter Crate', 100));
+    document.getElementById("btn-case-silver").addEventListener("click", () => openCase('Silver Vault', 500));
+    document.getElementById("btn-case-cyber").addEventListener("click", () => openCase('Cyber Cyberbox', 2500));
+    document.getElementById("btn-case-mythic").addEventListener("click", () => openCase('Mythic Extrilo', 10000));
+    document.getElementById("btn-case-god").addEventListener("click", () => openCase('God Tier Case', 50000));
+
+    // ================================================================
+    // 11. DIRECT TIER SHOP
+    // ================================================================
+    async function buyTier(tier, price, val) {
+      initAudio();
+      const resBox = document.getElementById("shopResultBox");
+      if (appState.user.coins < price) {
+        resBox.className = "result-box error";
+        resBox.innerText = "Insufficient coins balance.";
+        return;
+      }
+
+      updateCoins(-price);
+      playBeep(900, 0.2);
+
+      // Generate 8-character uppercase code (e.g. POAU6ANR)
+      const code = generate8CharChatCode();
+
+      // Write live code directly to /extrilo/extrilo_promos/POAU6ANR in Chat DB
+      await writeChatPromo(code, tier);
+
+      // Add to inventory
+      await addInventoryItem(tier, code, val);
+
+      resBox.className = "result-box success";
+      resBox.innerHTML = `Purchased <strong>${tier}</strong>! Live Chat Code: <code>${code}</code> added to inventory.`;
+    }
+
+    document.getElementById("btn-shop-supporter").addEventListener("click", () => buyTier('Supporter Tier', 250, 100));
+    document.getElementById("btn-shop-vip").addEventListener("click", () => buyTier('VIP', 750, 300));
+    document.getElementById("btn-shop-premium").addEventListener("click", () => buyTier('Premium', 2500, 1000));
+    document.getElementById("btn-shop-goldenx").addEventListener("click", () => buyTier('GoldenX', 10000, 4000));
+    document.getElementById("btn-shop-synapsex").addEventListener("click", () => buyTier('SynapseX', 35000, 15000));
+    document.getElementById("btn-shop-prime").addEventListener("click", () => buyTier('Prime (2 months)', 100000, 50000));
+
+    // ================================================================
+    // 12. ADMIN PANEL SYSTEM
+    // ================================================================
+    function openAdminModal() {
+      document.getElementById("adminPassModal").classList.remove("hidden");
+    }
+
+    document.getElementById("btn-admin-verify").addEventListener("click", () => {
+      const key = document.getElementById("adminKeyInput").value.trim();
+      if (key === "123456789") {
+        document.getElementById("adminPassModal").classList.add("hidden");
+        document.getElementById("adminPanelModal").classList.remove("hidden");
+      } else {
+        alert("Incorrect Admin Password!");
+      }
+    });
+
+    document.getElementById("btn-admin-close").addEventListener("click", () => {
+      const boost = parseFloat(document.getElementById("adminBoostInput").value) || 0;
+      appState.adminBoost = boost;
+      calculateChance();
+      document.getElementById("adminPanelModal").classList.add("hidden");
+    });
+
+    document.getElementById("btn-admin-addcoins").addEventListener("click", () => {
+      const coins = parseInt(document.getElementById("adminCoinsInput").value) || 0;
+      updateCoins(coins);
+      alert(`Added 🪙 ${coins} coins!`);
+    });
+
+    document.getElementById("btn-admin-giveitem").addEventListener("click", async () => {
+      const tier = document.getElementById("adminItemTier").value;
+      const code = generate8CharChatCode();
+
+      await writeChatPromo(code, tier);
+      await addInventoryItem(tier, code, 1000);
+      alert(`Granted ${tier} directly to inventory! Live Chat Code: ${code}`);
+    });
+  </script>
+</body>
+</html>
